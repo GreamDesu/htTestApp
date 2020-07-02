@@ -62,11 +62,10 @@ export class AppComponent {
   onSubmit() {
    // this.search();
     console.log(this.searchForm.value);
-
     this.search(this.searchForm.value);
   }
 
-  compare(a,b) {
+  compare(a, b) {
     if ( a.last_nom < b.last_nom ){
       return -1;
     }
