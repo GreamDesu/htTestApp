@@ -5,73 +5,70 @@
 <html>
 <body>
 <div class="containment">
-<form class="search" id="search" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
-
-  <select formControlName="city">
-    <option value="" selected>Город вылета</option>
-    <option value= {{ids[city]}}   *ngFor="let city of cities">{{city}}</option>
-  </select>
-  <select formControlName="country">
-    <option value="" selected>Страна</option>
-    <option value = {{ids[country]}} *ngFor="let country of countries">{{country}}</option>
-  </select>
-  <input formControlName ="date" type="date">
-  <input type="number" formControlName="nights" min="5" max="15" placeholder="ночей от">
-  <input type="number"  formControlName="nightsTo" min="5" max="15" placeholder="ночей до">
-  <input type="submit" value="🔎 Найти ">
-</form>
-
-
-<div class="card flex-direction" *ngFor="let res of sortedRes">
-  <div class="image">
-    <img src="https://i.imgur.com/79YxeU9.png" class="hotel">
-    <div class="bottom-left">{{res.hotelName}}<br>
-    <div style="font-family: Gotham Pro, serif;">Турция, Кемер, 3 линия</div></div>
-    <div class="top-left" id="box1">8,5 / 10</div>
-    <div class="top-right" id="box2">-55%</div>
-    <div class="bottom-right" id="box3"> <img src="https://i.imgur.com/2B2mHMw.png" style="width: 13%;">
-      Рекомендуем
+  <form class="search" id="search" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+    <select formControlName="city">
+      <option value="" selected>Город вылета</option>
+      <option value={{city.key}} *ngFor="let city of cities | keyvalue">{{city.value}}</option>
+    </select>
+    <select formControlName="country">
+      <option value="" selected>Страна</option>
+      <option value={{country}} *ngFor="let country of ids[searchForm.get('city').value]">{{country}}</option>
+    </select>
+    <input formControlName="datepick" type="date" min="{{minDate}}" max="{{maxDate}}">
+    <input type="number" formControlName="nights" min="5" max="15" placeholder="ночей от">
+    <input type="number" formControlName="nightsTo" min="{{searchForm.get('nights').value+1}}" max="15"
+           placeholder="ночей до">
+    <input type="submit" value="🔎 Найти ">
+  </form>
+  <div class="card flex-direction" *ngFor="let res of reqResult">
+    <div class="image">
+      <img src="../assets/images/hotel.png" class="hotel">
+      <div class="bottom-left">{{res.hotelName}}
+        <div class="location">Турция, Кемер, 3 линия</div>
+      </div>
+      <div class="top-left" id="box1">8,5 / 10</div>
+      <div class="top-right" id="box2">-55%</div>
+      <div class="bottom-right">
+        <img src="../assets/images/tumbup.png" style="width: 13%; vertical-align: middle; margin-right: 10px">
+        <div id="box3">Рекомендуем</div>
+      </div>
     </div>
-<!--    <div class="centered">Centered</div>-->
+    <div class="borderContainer first">
+      <div class="borderContainerText">
+        <div class="containerTextOne">{{searchForm.value.nights}} — {{searchForm.value.nightsTo}} ночей</div>
+        <div class="containerTextTwo">Вылеты 26 фев — 04 мар из Алматы</div>
+      </div>
+    </div>
+    <div class="borderContainerRight">
+      <div class="container cost">
+        <a href='#'>2 взр и 3 реб</a>
+        <div class="costText">от {{res.price}} {{res.currency}}</div>
+      </div>
+    </div>
 
+    <div class="container second">
+      <div id="box4"> 458 944 ₸</div>
+      <div class="textTime">x 24 мес</div>
+    </div>
+    <a class="tours" href="#">Показать туры (53)</a>
   </div>
-
-
-  <div class="container first"><br>
-    <h4>{{searchForm.value.nights}} — {{searchForm.value.nightsTo}} ночей<br>
-      Вылеты 26 фев — 04 мар из Алматы</h4>
-  </div>
-
-  <div class="container cost">
-
-    <a href='#'>2 взр и 3 реб</a>
-    <h2>от {{res.price}} {{res.currency}}</h2>
-  </div>
-  <div class="container second" >
-    <div id="box4"> 458 944 ₸ </div>
-    x 24 мес
-  </div>
-  <a class="tours" href="#">Показать туры (53)</a>
 </div>
-
-</div>
-
-
 <div class="footer">
-  <button class="footbutton" onclick="location.href='#search'">
+  <button class="footbutton borderContainerRight" onclick="location.href='#search'">
     <img style="" src="../assets/images/find.png">
     <span href="#">ПОИСК</span>
+    <span class="small">по отелю</span>
   </button>
-  <button class="footbutton">
+  <button class="footbutton borderContainerRight">
     <img src="../assets/images/filter.png">
     <span>ФИЛЬТРЫ</span>
+    <span class="small">не выбранно</span>
   </button>
-  <button class="footbutton">
+  <button class="footbutton borderContainerNone">
     <img src="../assets/images/sort.png">
     <span>СОРТИРОВКА</span>
+    <span class="small">сначала дешевле</span>
   </button>
-
 </div>
 </body>
-
 </html>

@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder,  Validators } from '@angular/forms';
+import {HelperService} from './services/helper.service';
 
 @Component({
   selector: 'app-root',
@@ -9,71 +10,45 @@ import { FormBuilder } from '@angular/forms';
 })
 export class AppComponent {
   private searchUrl = 'https://ht.kz/test/searchPartner1';
-  private departCity: string;
-  private country: string;
-  private date: string;
-  private nights: string;
-  private nightsTo: string;
-  private ids = {
-    Алматы: 10,
-    Астана: 11,
-    Турция: 552 ,
-    Тайланд: 553,
-    Чехия: 554,
+  ids = {
+    10: ['Турция', 'Тайланд'],
+    11: ['Турция', 'Чехия']
   };
-  countries = [ 'Турция', 'Тайланд', 'Чехия'];
-  cities = ['Алматы', 'Астана'];
-  theDate: any;
-  private searchRes: any;
-  private sortedRes: any;
-  constructor(private http: HttpClient, public fb: FormBuilder) {
-    this.theDate = new Date();
+  cities = {
+    10: 'Алматы',
+    11: 'Астана'
+  };
+  minDate: string;
+  maxDate: string;
+  reqResult: [{ hotelName: string; price: number; currency: string }];
+
+  constructor(private http: HttpClient, public fb: FormBuilder, private helper: HelperService) {
+    const tomorrow  = new Date();
+    tomorrow.setDate(new Date().getDate() + 1);
+    const nextNinety =  new Date();
+    nextNinety.setDate(new Date().getDate() + 90);
+    this.minDate = tomorrow.toISOString().split('T')[0];
+    this.maxDate = nextNinety.toISOString().split('T')[0];
   }
 
   searchForm = this.fb.group({
-    city: [''],
-    date: [''],
-    nights: [''],
-    nightsTo: [''],
-    country: ['']
+    city: ['', Validators.required],
+    datepick: ['', Validators.required],
+    nights: ['', Validators.required],
+    nightsTo: ['', Validators.required],
+    country: ['', Validators.required]
   });
 
-  search(obj) {
-    const params = new HttpParams()
-      .set('departCity', obj.city)
-      .set('country', obj.country)
-      .set('date', obj.date)
-      .set('nights', obj.nights)
-      .set('nightsTo', obj.nightsTo);
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json');
-    this.http.get(this.searchUrl, {
-      headers,
-      params
-    })
-      .subscribe(data => {
-        console.log(data);
-        this.searchRes = data;
-        this.sortedRes = this.searchRes.tours.sort((a, b) => (a.price > b.price) ? 1 : ((b.price > a.price) ? -1 : 0));
-        console.log(this.sortedRes );
+
+  async onSubmit() {
+    console.log(this.searchForm.value);
+    if (this.searchForm.invalid) {
+      alert('Пожалуйста, заполните все поля');
+      return;
+    }
+    (await this.helper.search(this.searchForm.value, this.searchUrl)).subscribe(
+      (data) => {
+        this.reqResult =  data;
       });
   }
-
-  onSubmit() {
-   // this.search();
-    console.log(this.searchForm.value);
-    this.search(this.searchForm.value);
-  }
-
-  compare(a, b) {
-    if ( a.last_nom < b.last_nom ){
-      return -1;
-    }
-    if ( a.last_nom > b.last_nom ){
-      return 1;
-    }
-    return 0;
-  }
-
-
 }
