@@ -102,12 +102,15 @@
 }
 
 .borderContainerRight {
+  border-right: solid 1px #e7e7e7;
+}
+
+.borderRight {
 
   border-width: 0 1px 0 0;
   border-color: #ffffff;
 }
-
-.borderContainerNone {
+.borderNone {
   border-width: 0 0 0 0;
   border-color: #ffffff;
 }
